@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>App</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        {% block javascript %}
+        <script>
+            window.props = {{ props|json_encode()|raw }}
+        </script>
+        {{ vite_entry_script_tags(
+          'app',
+          {
+            dependency: 'react',
+            attr: {
+                referrerpolicy: "origin"
+            }
+          }
+        ) }}
+        {% endblock %}
+        {{ vite_entry_link_tags('app') }}
+    </head>
+    <body>
+        <div id="app">{{ appHtml | raw }}</div>
+    </body>
+</html>
