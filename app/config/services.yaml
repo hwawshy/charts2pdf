@@ -23,3 +23,16 @@ services:
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
+    monolog.formatter.treknparcel_formatter:
+        class: Monolog\Formatter\LineFormatter
+        arguments:
+            $format: "[%%datetime%%][%%extra.process_id%%][%%level_name%%][%%channel%%] %%message%% %%context%% \n"
+            $dateFormat: "Y-m-d H:i:s,v"
+        calls:
+            - [ includeStacktraces ]
+
+    monolog.processor.process_id_processor:
+        class: Monolog\Processor\ProcessIdProcessor
+        autowire: true
+        tags:
+            - { name: monolog.processor, handler: main }
