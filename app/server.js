@@ -3,7 +3,7 @@ import bodyParser from "body-parser";
 import { createServer as createViteServer } from 'vite'
 
 (async () => {
-    const isProd = process.env.NODE_ENV === 'prod';
+    const isProd = process.env.NODE_ENV === 'production';
 
     const app = express()
 

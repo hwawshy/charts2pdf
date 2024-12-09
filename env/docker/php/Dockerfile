@@ -1,11 +1,12 @@
-FROM php:8.3-fpm as build
+FROM php:8.3-fpm AS build
 
 RUN apt-get update && apt-get upgrade -y
-RUN apt-get install -y libzip-dev unzip zip git libicu-dev
+RUN apt-get install -y libzip-dev unzip zip git libicu-dev chromium
 
 RUN docker-php-ext-install pdo_mysql
 RUN docker-php-ext-install zip
 RUN docker-php-ext-install intl
+RUN docker-php-ext-install sockets
 
 RUN pecl install xdebug-3.3.1 && docker-php-ext-enable xdebug
 
@@ -27,6 +28,7 @@ FROM build as prepare
 
 WORKDIR /app
 
+# vendor and/or node_modules will get overwritten because the app folder is mounted as a volume in docker-composer.yaml
 COPY --from=composer /usr/bin/composer /usr/bin/composer
 COPY ./app/composer.json ./app/composer.lock /app/
 RUN composer install --no-autoloader --no-scripts
