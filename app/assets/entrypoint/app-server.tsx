@@ -1,11 +1,16 @@
 import ReactDOMServer from 'react-dom/server'
 import {App, Props} from "../component/App";
 import '@mantine/core/styles.css';
-import { MantineProvider } from '@mantine/core';
 import './index.css'
+import {StrictMode} from "react";
+import {MantineProvider} from "@mantine/core";
 
 export function render(props: Props) {
     return ReactDOMServer.renderToString(
-        <MantineProvider><App {...props} /></MantineProvider>
+        <StrictMode>
+            <MantineProvider>
+                <App {...props} />
+            </MantineProvider>
+        </StrictMode>
     )
 }

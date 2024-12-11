@@ -1,35 +1,11 @@
-import s from './App.module.scss';
-import {useState} from "react";
-import {Button} from "@mantine/core";
+import {Editor} from "./editor/Editor.tsx";
 
-export type Props = {
-    products: Product[],
-}
+export type Props = object
 
-type Product = {
-    id: number
-    title: string
-    description: string,
-    price: number,
-    category: string,
-    thumbnail: string,
-    images: string[]
-}
 
-export function App(props: Props) {
-    const [products] = useState<Product[]>(props.products);
-
-    if (products.length === 0) {
-        return <h1>Nothing to see here</h1>
-    }
-
-    return <div className={`${s.PostsContainer}`}>
-        {products.map(p =>
-            <div className={s.Post} key={p.id}>
-                <p>{p.title}</p>
-                <img src={p.thumbnail} alt={p.title} />
-                <Button>Buy!</Button>
-            </div>
-        )}
-    </div>;
+export function App() {
+    return <>
+        <h1 className={"text-center font-medium text-2xl text-gray-800 mt-2.5"}>ChartToPdf</h1>
+        <Editor />
+    </>;
 }

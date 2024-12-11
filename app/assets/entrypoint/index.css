@@ -3,3 +3,13 @@
 }
 @tailwind components;
 @tailwind utilities;
+
+@layer components {
+    .btn-toolbar {
+        @apply border-0 flex bg-none rounded-[10px] p-2.5 cursor-pointer align-middle
+    }
+
+    .format-toolbar {
+        @apply bg-contain flex h-[18px] w-[18px] mt-0.5 align-[-4px] opacity-60
+    }
+}
