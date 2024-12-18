@@ -12,6 +12,16 @@ import {
     UNDO_COMMAND,
 } from 'lexical';
 import {useCallback, useEffect, useRef, useState} from 'react';
+import ArrowClockwise from '../../../icons/editor/arrow-clockwise.svg';
+import ArrowCounterclockwise from '../../../icons/editor/arrow-counterclockwise.svg';
+import TypeBold from '../../../icons/editor/type-bold.svg';
+import TypeItalic from '../../../icons/editor/type-italic.svg';
+import TypeStrikethrough from '../../../icons/editor/type-strikethrough.svg';
+import TypeUnderline from '../../../icons/editor/type-underline.svg';
+import Justify from '../../../icons/editor/justify.svg';
+import TextCenter from '../../../icons/editor/text-center.svg';
+import TextLeft from '../../../icons/editor/text-left.svg';
+import TextRight from '../../../icons/editor/text-right.svg';
 
 const LowPriority = 1;
 
@@ -83,7 +93,9 @@ export default function ToolbarPlugin() {
                 }}
                 className={"btn-toolbar mr-0.5 disabled:cursor-not-allowed " + (canUndo ? "hover:bg-[#eee]" : "")}
                 aria-label="Undo">
-                <i className={"format-toolbar bg-[url('icons/editor/arrow-counterclockwise.svg')] " + (!canUndo ? "opacity-20" : "")} />
+                <i className={"opacity-60 " + (!canUndo ? "!opacity-20" : "")}>
+                    <ArrowCounterclockwise className={"w-[18px] h-[18px]"} />
+                </i>
             </button>
             <button
                 disabled={!canRedo}
@@ -92,7 +104,9 @@ export default function ToolbarPlugin() {
                 }}
                 className={"btn-toolbar disabled:cursor-not-allowed " + (canRedo ? "hover:bg-[#eee]" : "")}
                 aria-label="Redo">
-                <i className={"format-toolbar bg-[url('icons/editor/arrow-clockwise.svg')] " + (!canRedo ? "opacity-20" : "")} />
+                <i className={"opacity-60 " + (!canRedo ? "!opacity-20" : "")}>
+                    <ArrowClockwise className={"w-[18px] h-[18px]"} />
+                </i>
             </button>
             <Divider />
             <button
@@ -101,7 +115,9 @@ export default function ToolbarPlugin() {
                 }}
                 className={'btn-toolbar mr-0.5 hover:bg-[#eee] ' + (isBold ? 'bg-[#dfe8fa4d]' : '')}
                 aria-label="Format Bold">
-                <i className={"format-toolbar bg-[url('icons/editor/type-bold.svg')] " + (isBold ? "opacity-100" : "")} />
+                <i className={"opacity-60 " + (isBold ? "!opacity-100" : "")}>
+                    <TypeBold className={"w-[18px] h-[18px]"} />
+                </i>
             </button>
             <button
                 onClick={() => {
@@ -109,7 +125,9 @@ export default function ToolbarPlugin() {
                 }}
                 className={'btn-toolbar mr-0.5 hover:bg-[#eee] ' + (isItalic ? 'bg-[#dfe8fa4d]' : '')}
                 aria-label="Format Italics">
-                <i className={"format-toolbar bg-[url('icons/editor/type-italic.svg')] " + (isItalic ? "opacity-100" : "")} />
+                <i className={"opacity-60 " + (isItalic ? "!opacity-100" : "")}>
+                    <TypeItalic className={"w-[18px] h-[18px]"} />
+                </i>
             </button>
             <button
                 onClick={() => {
@@ -117,7 +135,9 @@ export default function ToolbarPlugin() {
                 }}
                 className={'btn-toolbar mr-0.5 hover:bg-[#eee] ' + (isUnderline ? 'bg-[#dfe8fa4d]' : '')}
                 aria-label="Format Underline">
-                <i className={"format-toolbar bg-[url('icons/editor/type-underline.svg')] " + (isUnderline ? "opacity-100" : "") } />
+                <i className={"opacity-60 " + (isUnderline ? "!opacity-100" : "") }>
+                    <TypeUnderline className={"w-[18px] h-[18px]"} />
+                </i>
             </button>
             <button
                 onClick={() => {
@@ -125,7 +145,9 @@ export default function ToolbarPlugin() {
                 }}
                 className={'btn-toolbar mr-0.5 hover:bg-[#eee] ' + (isStrikethrough ? 'bg-[#dfe8fa4d]' : '')}
                 aria-label="Format Strikethrough">
-                <i className={"format-toolbar bg-[url('icons/editor/type-strikethrough.svg')] " + (isStrikethrough ? "opacity-100" : "")} />
+                <i className={"opacity-60 " + (isStrikethrough ? "!opacity-100" : "")}>
+                    <TypeStrikethrough className={"w-[18px] h-[18px]"} />
+                </i>
             </button>
             <Divider />
             <button
@@ -134,7 +156,9 @@ export default function ToolbarPlugin() {
                 }}
                 className="btn-toolbar mr-0.5 hover:bg-[#eee]"
                 aria-label="Left Align">
-                <i className="format-toolbar bg-[url('icons/editor/text-left.svg')]" />
+                <i className="opacity-60">
+                    <TextLeft className={"w-[18px] h-[18px]"} />
+                </i>
             </button>
             <button
                 onClick={() => {
@@ -142,7 +166,9 @@ export default function ToolbarPlugin() {
                 }}
                 className="btn-toolbar mr-0.5 hover:bg-[#eee]"
                 aria-label="Center Align">
-                <i className="format-toolbar bg-[url('icons/editor/text-center.svg')]" />
+                <i className="opacity-60">
+                    <TextCenter className={"w-[18px] h-[18px]"} />
+                </i>
             </button>
             <button
                 onClick={() => {
@@ -150,7 +176,9 @@ export default function ToolbarPlugin() {
                 }}
                 className="btn-toolbar mr-0.5 hover:bg-[#eee]"
                 aria-label="Right Align">
-                <i className="format-toolbar bg-[url('icons/editor/text-right.svg')]" />
+                <i className="opacity-60">
+                    <TextRight className={"w-[18px] h-[18px]"} />
+                </i>
             </button>
             <button
                 onClick={() => {
@@ -158,7 +186,9 @@ export default function ToolbarPlugin() {
                 }}
                 className="btn-toolbar hover:bg-[#eee]"
                 aria-label="Justify Align">
-                <i className="format-toolbar bg-[url('icons/editor/justify.svg')]" />
+                <i className="opacity-60">
+                    <Justify className={"w-[18px] h-[18px]"} />
+                </i>
             </button>{' '}
         </div>
     );

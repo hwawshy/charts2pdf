@@ -1,6 +1,7 @@
 import { defineConfig } from "vite";
 import symfonyPlugin from "vite-plugin-symfony";
 import react from "@vitejs/plugin-react-swc";
+import svgr from "vite-plugin-svgr";
 
 export default defineConfig({
     server: {
@@ -9,7 +10,11 @@ export default defineConfig({
     plugins: [
         react(),
         symfonyPlugin({
-            viteDevServerHostname: 'localhost'
+            viteDevServerHostname: 'local.chartspdf.com'
+        }),
+        svgr({
+            svgrOptions: { exportType: 'default', ref: true, svgo: false, titleProp: true },
+            include: '**/*.svg',
         }),
     ],
     base: '/build/',
@@ -18,7 +23,8 @@ export default defineConfig({
         cssCodeSplit: true,
         rollupOptions: {
             input: {
-                app: "./assets/entrypoint/app-client.tsx"
+                app: "./assets/entrypoint/app-client.tsx",
+                pdf: "./assets/component/pdf/index.ts"
             },
         }
     },
