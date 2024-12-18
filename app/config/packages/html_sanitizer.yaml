@@ -1,0 +1,15 @@
+framework:
+  html_sanitizer:
+    sanitizers:
+      main_sanitizer:
+        allow_elements:
+          p: []
+          u: []
+          s: []
+          i: []
+          b: []
+          strong: []
+        allow_attributes:
+          style: '*'
+          dir: '*'
+          class: '*'
