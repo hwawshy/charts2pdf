@@ -3,8 +3,16 @@
 <head>
     <title>Pdf Result</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {% if env == 'dev' %}
+        {{ vite_entry_link_tags('pdf') }}
+        {{ vite_entry_script_tags('pdf') }}
+    {% else %}
+        {% for file in cssFiles %}
+            <link rel="stylesheet" href="{{ file }}">
+        {% endfor %}
+    {% endif %}
 </head>
-<body>
+<body class="px-2.5 py-4">
 <div id="app">{{ resultHtml | raw }}</div>
 </body>
 </html>

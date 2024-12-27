@@ -7,53 +7,58 @@ import {RichTextPlugin} from '@lexical/react/LexicalRichTextPlugin';
 import {
     $isTextNode,
     DOMConversionMap,
-    DOMExportOutput,
-    DOMExportOutputMap,
-    Klass,
-    LexicalEditor,
-    LexicalNode,
+    // DOMExportOutput,
+    // DOMExportOutputMap,
+    // Klass,
+    // LexicalEditor,
+    // LexicalNode,
     ParagraphNode,
     TextNode,
 } from 'lexical';
 
-import ExampleTheme from './ExampleTheme.ts';
+import ExampleTheme from '../common/ExampleTheme.ts';
 import ToolbarPlugin from './plugins/ToolbarPlugin.tsx';
-import TreeViewPlugin from './plugins/TreeViewPlugin.tsx';
 import {parseAllowedColor, parseAllowedFontSize} from './styleConfig.ts';
 import SubmitPlugin from "./plugins/SubmitPlugin.tsx";
+import {useDisclosure} from "@mantine/hooks";
+import {useState} from "react";
+import {SuccessModal} from "../ResultModal.tsx";
+import ChartPlugin from "./plugins/chart/ChartPlugin.tsx";
+import {ChartNode} from "./plugins/chart/ChartNode.tsx";
+//import TreeViewPlugin from "./plugins/TreeViewPlugin.tsx";
 
 const placeholder = 'Enter some rich text...';
 
-const removeStylesExportDOM = (
-    editor: LexicalEditor,
-    target: LexicalNode,
-): DOMExportOutput => {
-    const output = target.exportDOM(editor);
-    if (output && output.element instanceof HTMLElement) {
-        // Remove all inline styles and classes if the element is an HTMLElement
-        // Children are checked as well since TextNode can be nested
-        // in i, b, and strong tags.
-        for (const el of [
-            output.element,
-            ...output.element.querySelectorAll('[style],[class],[dir="ltr"]'),
-        ]) {
-            el.removeAttribute('class');
-            el.removeAttribute('style');
-            if (el.getAttribute('dir') === 'ltr') {
-                el.removeAttribute('dir');
-            }
-        }
-    }
-    return output;
-};
+// const removeStylesExportDOM = (
+//     editor: LexicalEditor,
+//     target: LexicalNode,
+// ): DOMExportOutput => {
+//     const output = target.exportDOM(editor);
+//     if (output && output.element instanceof HTMLElement) {
+//         // Remove all inline styles and classes if the element is an HTMLElement
+//         // Children are checked as well since TextNode can be nested
+//         // in i, b, and strong tags.
+//         for (const el of [
+//             output.element,
+//             ...output.element.querySelectorAll('[style],[class],[dir="ltr"]'),
+//         ]) {
+//             el.removeAttribute('class');
+//             el.removeAttribute('style');
+//             if (el.getAttribute('dir') === 'ltr') {
+//                 el.removeAttribute('dir');
+//             }
+//         }
+//     }
+//     return output;
+// };
 
-const exportMap: DOMExportOutputMap = new Map<
-    Klass<LexicalNode>,
-    (editor: LexicalEditor, target: LexicalNode) => DOMExportOutput
->([
-    [ParagraphNode, removeStylesExportDOM],
-    [TextNode, removeStylesExportDOM],
-]);
+// const exportMap: DOMExportOutputMap = new Map<
+//     Klass<LexicalNode>,
+//     (editor: LexicalEditor, target: LexicalNode) => DOMExportOutput
+// >([
+//     [ParagraphNode, removeStylesExportDOM],
+//     [TextNode, removeStylesExportDOM],
+// ]);
 
 const getExtraStyles = (element: HTMLElement): string => {
     // Parse styles from pasted input, but only if they match exactly the
@@ -122,11 +127,11 @@ const constructImportMap = (): DOMConversionMap => {
 
 const editorConfig = {
     html: {
-        export: exportMap,
+        //export: exportMap,
         import: constructImportMap(),
     },
     namespace: 'React.js Demo',
-    nodes: [ParagraphNode, TextNode],
+    nodes: [ParagraphNode, TextNode, ChartNode],
     onError(error: Error) {
         throw error;
     },
@@ -134,29 +139,38 @@ const editorConfig = {
 };
 
 export function Editor() {
+    const [opened, {open, close}] = useDisclosure(false);
+    const [pdfData, setPdfData] = useState<string | null>(null);
+
     return (
-        <LexicalComposer initialConfig={editorConfig}>
-            <div className="mx-auto my-5 rounded-sm rounded-t-xl max-w-[600px] relative font-[400] leading-5 text-left text-black">
-                <ToolbarPlugin />
-                <div className="bg-white relative">
-                    <RichTextPlugin
-                        contentEditable={
-                            <ContentEditable
-                                className="min-h-[150px] relative text-[15px] leading-5 resize-none caret-gray-600 outline-0 px-2.5 py-4"
-                                aria-placeholder={placeholder}
-                                placeholder={
-                                    <div className="absolute text-neutral-400 overflow-hidden text-ellipsis top-[15px] left-[10px] text-[15px] select-none inline-block pointer-events-none">{placeholder}</div>
-                                }
-                            />
-                        }
-                        ErrorBoundary={LexicalErrorBoundary}
-                    />
-                    <HistoryPlugin />
-                    <AutoFocusPlugin />
-                    <TreeViewPlugin />
-                    <SubmitPlugin />
+        <>
+            <LexicalComposer initialConfig={editorConfig}>
+                <div
+                    className="mx-auto my-5 rounded-sm rounded-t-xl max-w-[210mm] relative font-[400] leading-5 text-left text-black">
+                    <ToolbarPlugin/>
+                    <div className="bg-white relative rounded-b-xl">
+                        <RichTextPlugin
+                            contentEditable={
+                                <ContentEditable
+                                    className="min-h-[150px] relative text-[15px] leading-5 resize-none caret-gray-600 outline-0 px-2.5 py-4 mb-2.5"
+                                    aria-placeholder={placeholder}
+                                    placeholder={
+                                        <div
+                                            className="absolute text-neutral-400 overflow-hidden text-ellipsis top-[15px] left-[10px] text-[15px] select-none inline-block pointer-events-none">{placeholder}</div>
+                                    }
+                                />
+                            }
+                            ErrorBoundary={LexicalErrorBoundary}
+                        />
+                        <ChartPlugin />
+                        <HistoryPlugin/>
+                        <AutoFocusPlugin/>
+                        <SubmitPlugin openModal={open} setPdfData={setPdfData} />
+                    </div>
                 </div>
-            </div>
-        </LexicalComposer>
+            </LexicalComposer>
+            <SuccessModal opened={opened} close={close} pdfData={pdfData} />
+        </>
+
     );
 }

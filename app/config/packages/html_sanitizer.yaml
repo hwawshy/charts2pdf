@@ -9,7 +9,11 @@ framework:
           i: []
           b: []
           strong: []
+          img: []
+          span: []
         allow_attributes:
           style: '*'
           dir: '*'
           class: '*'
+          src: '*'
+        max_input_length: -1

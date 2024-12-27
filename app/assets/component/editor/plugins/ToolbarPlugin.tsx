@@ -22,6 +22,9 @@ import Justify from '../../../icons/editor/justify.svg';
 import TextCenter from '../../../icons/editor/text-center.svg';
 import TextLeft from '../../../icons/editor/text-left.svg';
 import TextRight from '../../../icons/editor/text-right.svg';
+import BarChart from '../../../icons/editor/bar-chart.svg';
+import {INSERT_CHART_COMMAND} from "./chart/ChartPlugin.tsx";
+import s from './ToolbarPlugin.module.css';
 
 const LowPriority = 1;
 
@@ -85,16 +88,16 @@ export default function ToolbarPlugin() {
     }, [editor, $updateToolbar]);
 
     return (
-        <div className="flex mb-[1px] bg-white p-1 rounded-t-[10px] align-middle mb-" ref={toolbarRef}>
+        <div className="flex mb-[1px] bg-white p-1 rounded-t-[10px] align-middle overflow-y-auto" ref={toolbarRef}>
             <button
                 disabled={!canUndo}
                 onClick={() => {
                     editor.dispatchCommand(UNDO_COMMAND, undefined);
                 }}
-                className={"btn-toolbar mr-0.5 disabled:cursor-not-allowed " + (canUndo ? "hover:bg-[#eee]" : "")}
+                className={`${s.btnToolbar} mr-0.5 disabled:cursor-not-allowed ` + (canUndo ? "hover:bg-[#eee]" : "")}
                 aria-label="Undo">
                 <i className={"opacity-60 " + (!canUndo ? "!opacity-20" : "")}>
-                    <ArrowCounterclockwise className={"w-[18px] h-[18px]"} />
+                    <ArrowCounterclockwise className={"w-[18px] h-[18px]"}/>
                 </i>
             </button>
             <button
@@ -102,94 +105,105 @@ export default function ToolbarPlugin() {
                 onClick={() => {
                     editor.dispatchCommand(REDO_COMMAND, undefined);
                 }}
-                className={"btn-toolbar disabled:cursor-not-allowed " + (canRedo ? "hover:bg-[#eee]" : "")}
+                className={`${s.btnToolbar} disabled:cursor-not-allowed ` + (canRedo ? "hover:bg-[#eee]" : "")}
                 aria-label="Redo">
                 <i className={"opacity-60 " + (!canRedo ? "!opacity-20" : "")}>
-                    <ArrowClockwise className={"w-[18px] h-[18px]"} />
+                    <ArrowClockwise className={"w-[18px] h-[18px]"}/>
                 </i>
             </button>
-            <Divider />
+            <Divider/>
             <button
                 onClick={() => {
                     editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'bold');
                 }}
-                className={'btn-toolbar mr-0.5 hover:bg-[#eee] ' + (isBold ? 'bg-[#dfe8fa4d]' : '')}
+                className={`${s.btnToolbar} mr-0.5 hover:bg-[#eee] ` + (isBold ? 'bg-[#dfe8fa4d]' : '')}
                 aria-label="Format Bold">
                 <i className={"opacity-60 " + (isBold ? "!opacity-100" : "")}>
-                    <TypeBold className={"w-[18px] h-[18px]"} />
+                    <TypeBold className={"w-[18px] h-[18px]"}/>
                 </i>
             </button>
             <button
                 onClick={() => {
                     editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'italic');
                 }}
-                className={'btn-toolbar mr-0.5 hover:bg-[#eee] ' + (isItalic ? 'bg-[#dfe8fa4d]' : '')}
+                className={`${s.btnToolbar} mr-0.5 hover:bg-[#eee] ` + (isItalic ? 'bg-[#dfe8fa4d]' : '')}
                 aria-label="Format Italics">
                 <i className={"opacity-60 " + (isItalic ? "!opacity-100" : "")}>
-                    <TypeItalic className={"w-[18px] h-[18px]"} />
+                    <TypeItalic className={"w-[18px] h-[18px]"}/>
                 </i>
             </button>
             <button
                 onClick={() => {
                     editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'underline');
                 }}
-                className={'btn-toolbar mr-0.5 hover:bg-[#eee] ' + (isUnderline ? 'bg-[#dfe8fa4d]' : '')}
+                className={`${s.btnToolbar} mr-0.5 hover:bg-[#eee] ` + (isUnderline ? 'bg-[#dfe8fa4d]' : '')}
                 aria-label="Format Underline">
-                <i className={"opacity-60 " + (isUnderline ? "!opacity-100" : "") }>
-                    <TypeUnderline className={"w-[18px] h-[18px]"} />
+                <i className={"opacity-60 " + (isUnderline ? "!opacity-100" : "")}>
+                    <TypeUnderline className={"w-[18px] h-[18px]"}/>
                 </i>
             </button>
             <button
                 onClick={() => {
                     editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'strikethrough');
                 }}
-                className={'btn-toolbar mr-0.5 hover:bg-[#eee] ' + (isStrikethrough ? 'bg-[#dfe8fa4d]' : '')}
+                className={`${s.btnToolbar} mr-0.5 hover:bg-[#eee] ` + (isStrikethrough ? 'bg-[#dfe8fa4d]' : '')}
                 aria-label="Format Strikethrough">
                 <i className={"opacity-60 " + (isStrikethrough ? "!opacity-100" : "")}>
-                    <TypeStrikethrough className={"w-[18px] h-[18px]"} />
+                    <TypeStrikethrough className={"w-[18px] h-[18px]"}/>
                 </i>
             </button>
-            <Divider />
+            <Divider/>
             <button
                 onClick={() => {
                     editor.dispatchCommand(FORMAT_ELEMENT_COMMAND, 'left');
                 }}
-                className="btn-toolbar mr-0.5 hover:bg-[#eee]"
+                className={`${s.btnToolbar} mr-0.5 hover:bg-[#eee]`}
                 aria-label="Left Align">
                 <i className="opacity-60">
-                    <TextLeft className={"w-[18px] h-[18px]"} />
+                    <TextLeft className={"w-[18px] h-[18px]"}/>
                 </i>
             </button>
             <button
                 onClick={() => {
                     editor.dispatchCommand(FORMAT_ELEMENT_COMMAND, 'center');
                 }}
-                className="btn-toolbar mr-0.5 hover:bg-[#eee]"
+                className={`${s.btnToolbar} mr-0.5 hover:bg-[#eee]`}
                 aria-label="Center Align">
                 <i className="opacity-60">
-                    <TextCenter className={"w-[18px] h-[18px]"} />
+                    <TextCenter className={"w-[18px] h-[18px]"}/>
                 </i>
             </button>
             <button
                 onClick={() => {
                     editor.dispatchCommand(FORMAT_ELEMENT_COMMAND, 'right');
                 }}
-                className="btn-toolbar mr-0.5 hover:bg-[#eee]"
+                className={`${s.btnToolbar} mr-0.5 hover:bg-[#eee]`}
                 aria-label="Right Align">
                 <i className="opacity-60">
-                    <TextRight className={"w-[18px] h-[18px]"} />
+                    <TextRight className={"w-[18px] h-[18px]"}/>
                 </i>
             </button>
             <button
                 onClick={() => {
                     editor.dispatchCommand(FORMAT_ELEMENT_COMMAND, 'justify');
                 }}
-                className="btn-toolbar hover:bg-[#eee]"
+                className={`${s.btnToolbar} hover:bg-[#eee]`}
                 aria-label="Justify Align">
                 <i className="opacity-60">
-                    <Justify className={"w-[18px] h-[18px]"} />
+                    <Justify className={"w-[18px] h-[18px]"}/>
                 </i>
-            </button>{' '}
+            </button>
+            <Divider/>
+            <button
+                onClick={() => {
+                    editor.dispatchCommand(INSERT_CHART_COMMAND, undefined);
+                }}
+                className={`${s.btnToolbar} hover:bg-[#eee]`}
+                aria-label="Insert Bar Chart">
+                <i className="opacity-60">
+                    <BarChart className={"w-[18px] h-[18px]"}/>
+                </i>
+            </button>
         </div>
     );
 }

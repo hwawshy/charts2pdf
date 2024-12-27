@@ -24,7 +24,7 @@ export default defineConfig({
         rollupOptions: {
             input: {
                 app: "./assets/entrypoint/app-client.tsx",
-                pdf: "./assets/component/pdf/index.ts"
+                pdf: "./assets/entrypoint/pdf-client.ts"
             },
         }
     },
