@@ -16,4 +16,6 @@ framework:
           dir: '*'
           class: '*'
           src: '*'
-        max_input_length: -1
+        max_input_length: -1 # TODO set this to a reasonable value to protect against DDoS
+        allowed_media_schemes: ['data']
+        allowed_link_schemes: ['fake'] # empty array results in allowing all schemes

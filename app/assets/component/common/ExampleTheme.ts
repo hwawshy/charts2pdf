@@ -3,7 +3,7 @@ export default {
     paragraph: 'relative mx-0 my-0 mb-2 last:mb-0',
     rtl: 'text-right',
     text: {
-        bold: 'font-bold text-red-800',
+        bold: 'font-bold',
         code: 'editor-text-code',
         hashtag: 'editor-text-hashtag',
         italic: 'italic',

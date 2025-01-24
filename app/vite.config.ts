@@ -10,7 +10,7 @@ export default defineConfig({
     plugins: [
         react(),
         symfonyPlugin({
-            viteDevServerHostname: 'local.chartspdf.com'
+            viteDevServerHostname: 'local.charts2pdf.com'
         }),
         svgr({
             svgrOptions: { exportType: 'default', ref: true, svgo: false, titleProp: true },

@@ -31,7 +31,7 @@ services:
       PHP_IDE_CONFIG: 'serverName=host.docker.internal'
     extra_hosts:
       - "host.docker.internal:host-gateway"
-      - "local.chartspdf.com:host-gateway"
+      - "local.charts2pdf.com:host-gateway"
 
 networks:
   treknparcel-network:

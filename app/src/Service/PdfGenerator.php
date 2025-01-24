@@ -68,6 +68,9 @@ readonly class PdfGenerator
         }
     }
 
+    /**
+     * @return string[]
+     */
     private function getCSSFiles(): array
     {
         if ($this->env === self::DEV) {
@@ -78,6 +81,6 @@ readonly class PdfGenerator
 
         $lookup = $this->lookupCollection->getEntrypointsLookup();
 
-        return array_map(fn (string $file): string => sprintf('http://local.chartspdf.com%s', $file), $lookup->getCSSFiles(self::ENTRY));
+        return array_map(fn (string $file): string => sprintf('http://local.charts2pdf.com%s', $file), $lookup->getCSSFiles(self::ENTRY));
     }
 }

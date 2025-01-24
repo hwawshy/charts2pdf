@@ -30,7 +30,7 @@ export default function SubmitPlugin({setPdfData, openModal}: Props): JSX.Elemen
         setLoading(true);
 
         try {
-            const response = await fetch('http://local.chartspdf.com/generate', {
+            const response = await fetch('http://local.charts2pdf.com/generate', {
                 method: 'POST',
                 headers: {
                     'Accept': 'application/json',
