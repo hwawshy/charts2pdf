@@ -2,6 +2,7 @@
 
 namespace TreknParcel\Controller;
 
+use Psr\Log\LoggerInterface;
 use Symfony\Component\HtmlSanitizer\HtmlSanitizerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
@@ -18,6 +19,7 @@ class IndexController extends AbstractController
         private readonly SsrService             $ssrService,
         private readonly PdfGenerator           $pdfGenerator,
         private readonly HtmlSanitizerInterface $mainSanitizer,
+        private readonly LoggerInterface        $logger
     ) {
     }
 
@@ -42,7 +44,9 @@ class IndexController extends AbstractController
             $result = $this->pdfGenerator->generate($safeHtml);
 
             return new JsonResponse(['content' => $result]);
-        } catch (\Throwable) {
+        } catch (\Throwable $e) {
+            $this->logger->error('An error occurred while generating PDF files: ' . $e->getMessage(), ['exception' => $e]);
+
             return new JsonResponse('An error occurred while generating PDF files', Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
