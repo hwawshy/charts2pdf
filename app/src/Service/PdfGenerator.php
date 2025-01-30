@@ -45,6 +45,10 @@ readonly class PdfGenerator
             'sendSyncDefaultTimeout' => self::TIMEOUT,
             'noSandbox' => true,
             'debugLogger' => $this->logger,
+            'envVariables' => [
+                'XDG_CONFIG_HOME' => '/tmp/.chromium',
+                'XDG_CACHE_HOME' => '/tmp/.chromium',
+            ]
         ]);
 
         try {
