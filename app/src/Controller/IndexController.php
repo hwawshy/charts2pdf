@@ -24,9 +24,13 @@ class IndexController extends AbstractController
     #[Route('/', name: 'index', methods: ['GET'])]
     public function index(): Response
     {
-        $ssrResult = $this->ssrService->render('/assets/entrypoint/app-server.tsx', []);
+        $props = [
+            'pdfGenerateUrl' => $this->generateUrl('generate')
+        ];
 
-        return $this->render('base.html.twig', ['props' => [], 'appHtml' => $ssrResult]);
+        $ssrResult = $this->ssrService->render('/assets/entrypoint/app-server.tsx', $props);
+
+        return $this->render('base.html.twig', ['props' => $props, 'appHtml' => $ssrResult]);
     }
 
     #[Route('/generate', name: 'generate', methods: ['POST'], format: 'json')]

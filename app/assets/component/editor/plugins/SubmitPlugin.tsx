@@ -1,7 +1,8 @@
 import {useLexicalComposerContext} from "@lexical/react/LexicalComposerContext";
 import {$generateHtmlFromNodes} from "@lexical/html";
-import {JSX, useCallback, useEffect, useState} from 'react'
+import {JSX, useCallback, useContext, useEffect, useState} from 'react'
 import {Button} from "@mantine/core";
+import {MainContext} from "../../../context/MainContext.ts";
 
 type Props = {
     setPdfData: (data: string) => void,
@@ -12,6 +13,7 @@ export default function SubmitPlugin({setPdfData, openModal}: Props): JSX.Elemen
     const [editor] = useLexicalComposerContext();
     const [html, setHtml] = useState<string | null>(null);
     const [loading, setLoading] = useState<boolean>(false);
+    const {pdfGenerateUrl} = useContext(MainContext);
 
     const $updateHtml = useCallback(() => {
         setHtml($generateHtmlFromNodes(editor, null));
@@ -30,7 +32,7 @@ export default function SubmitPlugin({setPdfData, openModal}: Props): JSX.Elemen
         setLoading(true);
 
         try {
-            const response = await fetch('http://local.charts2pdf.com/generate', {
+            const response = await fetch(pdfGenerateUrl, {
                 method: 'POST',
                 headers: {
                     'Accept': 'application/json',

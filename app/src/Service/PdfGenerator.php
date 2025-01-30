@@ -20,6 +20,8 @@ readonly class PdfGenerator
         private LoggerInterface             $logger,
         #[Autowire('%kernel.environment%')]
         private string                      $env,
+        #[Autowire(env: 'BASE_URL')]
+        private string $baseUrl
     ) {
     }
 
@@ -81,6 +83,6 @@ readonly class PdfGenerator
 
         $lookup = $this->lookupCollection->getEntrypointsLookup();
 
-        return array_map(fn (string $file): string => sprintf('http://local.charts2pdf.com%s', $file), $lookup->getCSSFiles(self::ENTRY));
+        return array_map(fn (string $file): string => sprintf('%s%s', $this->baseUrl, $file), $lookup->getCSSFiles(self::ENTRY));
     }
 }
