@@ -1,0 +1,17 @@
+---
+- name: Deploy App to Production
+  hosts: servers_prod
+  handlers:
+    - name: handlers
+      import_tasks: handlers.yml
+  vars:
+    ansistrano_deploy_via: git
+    ansistrano_deploy_to: "{{ deploy_base_directory }}"
+    ansistrano_git_repo: "git@github.com:hwawshy/treknparcel.git"
+    ansistrano_git_identity_key_path: "~/.ssh/git"
+    ansistrano_git_branch: main
+    ansistrano_keep_releases: 3
+    ansistrano_after_update_code_tasks_file: "{{ playbook_dir }}/roles_deploy/hooks/tasks/after-update-code.yml"
+    ansistrano_after_symlink_tasks_file: "{{ playbook_dir }}/roles_deploy/hooks/tasks/after-symlink.yml"
+  roles:
+    - { role: roles_deploy/ansistrano.deploy }

@@ -1,0 +1,32 @@
+---
+- name: Generate .env
+  template:
+    src: templates/dotenv.j2
+    dest: "{{ ansistrano_release_path.stdout }}/app/.env"
+    mode: "0644"
+
+- name: Ensure log directory exists
+  file:
+    path: "{{ ansistrano_release_path.stdout }}/app/var/log"
+    state: directory
+    mode: '0775'
+
+- name: Install composer dependencies
+  composer:
+    command: install
+    no_scripts: true
+    working_dir: "{{ ansistrano_release_path.stdout }}/app"
+
+- name: Install packages based on package.json.
+  npm:
+    path: "{{ ansistrano_release_path.stdout }}/app"
+
+- name: Build vite client
+  command: './node_modules/.bin/vite build'
+  args:
+    chdir: '{{ ansistrano_release_path.stdout }}/app'
+
+- name: Build vite server
+  command: './node_modules/.bin/vite build --config=vite.config.server.ts --ssr'
+  args:
+    chdir: '{{ ansistrano_release_path.stdout }}/app'

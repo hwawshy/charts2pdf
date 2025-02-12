@@ -1,0 +1,29 @@
+---
+- name: Install nginx
+  apt:
+    name: nginx
+    update_cache: true
+
+- name: Configure nginx
+  template:
+    src: templates/nginx.conf
+    dest: /etc/nginx/nginx.conf
+    owner: root
+    group: root
+    mode: "0644"
+  notify: Restart nginx
+
+- name: Add ip whitelist
+  template:
+    src: templates/ip_whitelist.conf
+    dest: /etc/nginx/ip_whitelist.conf
+    owner: root
+    group: root
+    mode: "0644"
+  notify: Restart nginx
+
+- name: Start nginx
+  service:
+    name: nginx
+    enabled: true
+

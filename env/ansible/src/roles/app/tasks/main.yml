@@ -1,0 +1,43 @@
+---
+- name: Deploy ssl certificate
+  copy:
+    src: files/ssl/charts2pdf.com.pem
+    dest: /etc/ssl/certs/charts2pdf.com.pem
+    mode: "0644"
+
+- name: Deploy ssl key
+  copy:
+    src: files/ssl/charts2pdf.com.key
+    dest: /etc/ssl/private/charts2pdf.com.key
+    mode: "0600"
+
+- name: Deploy cloudflare certificate
+  copy:
+    src: files/ssl/cloudflare.crt
+    dest: /etc/ssl/certs/cloudflare.crt
+    mode: "0600"
+
+- name: Configure nginx
+  template:
+    src: templates/nginx.conf
+    dest: /etc/nginx/sites-enabled/charts2pdf.com
+    owner: root
+    group: root
+    mode: "0644"
+  notify: Restart nginx
+
+- name: Copy supervisor.conf to conf.d
+  template:
+    src: templates/supervisor.conf
+    dest: /etc/supervisor/conf.d/app-workers.conf
+    owner: root
+    group: root
+    mode: "0644"
+
+- name: Supervisor reread
+  command: sudo supervisorctl reread
+  changed_when: true
+
+- name: Supervisor update
+  command: sudo supervisorctl update
+  changed_when: true

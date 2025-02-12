@@ -1,0 +1,5 @@
+deploy_base_directory: /app
+app_env: prod
+app_debug: 0
+ssr_url: "http://localhost:5175/ssr"
+base_url: "https://www.charts2pdf.com"

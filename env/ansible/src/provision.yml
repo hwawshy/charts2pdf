@@ -1,0 +1,16 @@
+---
+- name: Provision Production Servers
+  hosts: servers_prod
+  become: true
+  handlers:
+    - name: handlers
+      import_tasks: handlers.yml
+  roles:
+    - { role: system/nginx, tags: [nginx] }
+    - { role: system/php, tags: [php] }
+    - { role: system/nodejs, tags: [nodejs] }
+    - { role: system/supervisor, tags: [supervisor] }
+    - { role: system/chromium, tags: [chromium] }
+    - { role: system/git, tags: [git] }
+    - { role: system/composer, tags: [composer] }
+    - { role: app, tags: [app] }

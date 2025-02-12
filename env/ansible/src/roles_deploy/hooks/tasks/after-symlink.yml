@@ -1,0 +1,2 @@
+- name: Restart worker
+  shell: "sudo supervisorctl restart app:*"

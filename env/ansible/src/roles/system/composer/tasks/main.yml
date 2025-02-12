@@ -1,0 +1,11 @@
+- name: Download composer installer
+  get_url:
+    url: https://getcomposer.org/composer-2.phar
+    dest: "/usr/local/bin/composer"
+    mode: "0644"
+
+- name: Make composer executable
+  file:
+    path: "/usr/local/bin/composer"
+    mode: a+x
+    state: file
