@@ -3,7 +3,7 @@ charts2pdf is a web application that enables users to create PDF documents with 
 
 ## Technologies
 * PHP 8 & Symfony 7
-* React
+* Typescript & React
 * SSR using Vite
 * Chromium for creating PDFs
 * Ansible for deployment and provisioning servers
