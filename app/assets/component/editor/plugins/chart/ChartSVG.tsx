@@ -13,8 +13,7 @@ type Props = {
 
 export default function ChartSVG({chartId, chartOptions, chartSeries, nodeKey}: Props): JSX.Element {
     const [SVGElement, setSVGElement] = useState<SVGElement | null | undefined>(undefined);
-    const [isSelected, setSelected, clearSelection] =
-        useLexicalNodeSelection(nodeKey);
+    const [, setSelected, ] = useLexicalNodeSelection(nodeKey);
 
     useEffect(() => {
         const setElement = async () => {

@@ -1,6 +1,8 @@
-import {DecoratorNode, DOMExportOutput, LexicalEditor, LexicalNode, NodeKey} from "lexical";
+import {DecoratorNode, DOMExportOutput, LexicalEditor, LexicalNode, NodeKey, SerializedLexicalNode} from "lexical";
 import {JSX, Suspense} from 'react';
 import ChartSVG from "./ChartSVG.tsx";
+
+type SerializedChartNode = SerializedLexicalNode & {data: string, width: number, nodeKey: NodeKey};
 
 export class ChartNode extends DecoratorNode<JSX.Element> {
     constructor(private __data: string, private __width: number, key?: NodeKey) {
@@ -15,8 +17,22 @@ export class ChartNode extends DecoratorNode<JSX.Element> {
         return new ChartNode(node.__data, node.__width, node.__key);
     }
 
+    static importJSON(serializedNode: SerializedChartNode): ChartNode {
+        return new ChartNode(serializedNode.data, serializedNode.width, serializedNode.nodeKey);
+    }
+
     updateDOM(): false {
         return false;
+    }
+
+    exportJSON(): SerializedChartNode {
+        return {
+            data: this.__data,
+            nodeKey: this.getKey(),
+            width: 100,
+            type: ChartNode.getType(),
+            version: 1,
+        };
     }
 
     exportDOM(editor: LexicalEditor): DOMExportOutput {
