@@ -39,9 +39,9 @@ class IndexController extends AbstractController
     public function generate(#[MapRequestPayload] PDFRequest $pdfRequest): JsonResponse
     {
         try {
-            $safeHtml = $this->mainSanitizer->sanitize($pdfRequest->html);
+            //$safeHtml = $this->mainSanitizer->sanitize($pdfRequest->html);
 
-            $result = $this->pdfGenerator->generate($safeHtml);
+            $result = $this->pdfGenerator->generate($pdfRequest->html);
 
             return new JsonResponse(['content' => $result]);
         } catch (\Throwable $e) {

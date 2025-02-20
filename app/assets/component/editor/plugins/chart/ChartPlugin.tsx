@@ -9,46 +9,86 @@ import {
 } from "lexical";
 import {useDisclosure, useMediaQuery} from "@mantine/hooks";
 import {useLexicalComposerContext} from "@lexical/react/LexicalComposerContext";
-import {Accordion, Button, Center, Grid, Modal, Slider, Stack, Text} from '@mantine/core';
-import Chart from "chart.js/auto";
-import {Bar} from "react-chartjs-2";
-import {CategoryScale} from "chart.js";
+import {Accordion, Button, Center, Grid, Modal, Stack, Text} from '@mantine/core';
 import {$createChartNode} from "./ChartNode";
 import {$wrapNodeInElement} from "@lexical/utils";
 import {MultiSelectCreatable} from "./MultiSelectCreatable";
-import {Dataset, TDataset} from "./Dataset.tsx";
-import {ChartJSOrUndefined} from "react-chartjs-2/dist/types";
+import {Dataset} from "./Dataset.tsx";
+import {lazy, Suspense} from "react";
+import {ApexOptions} from "apexcharts";
+import { v4 as uuid } from 'uuid';
 
 export const INSERT_CHART_COMMAND: LexicalCommand<void> = createCommand(
     'INSERT_CHART_COMMAND',
 );
 
-Chart.register(CategoryScale);
-
-type ChartData = {
-    labels: string[],
-    datasets: Array<TDataset>
+export type TAxisDataset = {
+    name: string,
+    data: number[]
 };
+
+const ApexChart = lazy(async () => {
+    const module = await import("react-apexcharts");
+    return {default: module.default};
+});
 
 export default function ChartPlugin(): JSX.Element {
     const [modalOpened, {open: openModal, close: closeModal}] = useDisclosure(false);
     const [editor] = useLexicalComposerContext();
-    const [dataUrl, setDataUrl] = useState<null | string>(null);
-    const [size, setSize] = useState<number>(100);
-    const [width, setWidth] = useState<number>(0);
-    const chartRef = useRef<ChartJSOrUndefined<'bar'>>(null);
     const desktop = useMediaQuery('(min-width: 992px)');
+    const {current: chartId} = useRef<string>(uuid());
     const defaultDataset = {
-        label: 'Monthly Sales',  // The label for the dataset
-        data: [65, 59, 80, 81, 56, 55, 40],  // Data points corresponding to the labels
-        backgroundColor: 'rgba(75, 192, 192, 0.2)',  // Bar color
-        borderColor: 'rgba(75, 192, 192, 1)',  // Border color
-        borderWidth: 1  // Border width
+        name: 'New Dataset',
+        data: []
     };
-    const [chartData, setChartData] = useState<ChartData>({
-        labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],  // X-axis labels
-        datasets: [defaultDataset]
-    });
+    const [chartOptions, setChartOptions] = useState<ApexOptions>(
+        {
+            chart: {
+                id: chartId,
+                toolbar: {
+                    show: false,
+                },
+                animations: {
+                    enabled: true
+                }
+            },
+            tooltip: {
+                enabled: false,
+            },
+            title: {
+                text: 'Cool Chart',
+                align: 'center'
+            },
+            dataLabels: {
+                enabled: false,
+            },
+            subtitle: {
+                text: 'Some cool subtitle here',
+                align: 'center'
+            },
+            xaxis: {
+                categories: [
+                    1991, 1992, 1993, 1994, 1995, 1996, 1997, 1998, 1999,
+                ],
+            },
+            theme: {
+                palette: 'palette1'
+            }
+        }
+    );
+
+    const [chartSeries, setChartSeries] = useState<Array<TAxisDataset>>(
+        [{
+            name: 'Net Profit',
+            data: [44, 55, 57, 56, 61, 58, 63, 60, 66],
+        }, {
+            name: 'Revenue',
+            data: [76, 85, 101, 98, 87, 105, 91, 114, 94]
+        }, {
+            name: 'Free Cash Flow',
+            data: [35, 41, 36, 26, 45, 48, 52, 53, 41]
+        }]
+    );
 
     useEffect(() => {
         return editor.registerCommand(
@@ -62,17 +102,14 @@ export default function ChartPlugin(): JSX.Element {
         );
     }, [editor, openModal]);
 
-    useEffect(() => {
-        chartRef.current?.resize();
-    }, [size]);
-
     const onSave = (): void => {
-        if (dataUrl === null) {
-            return;
-        }
-
         editor.update(() => {
-            const node = $createChartNode(dataUrl, width)
+            const node = $createChartNode(
+                JSON.stringify({
+                    chartId,
+                    chartOptions,
+                    chartSeries
+                }), 100)
             $insertNodes([node]);
 
             if ($isRootOrShadowRoot(node.getParentOrThrow())) {
@@ -84,85 +121,75 @@ export default function ChartPlugin(): JSX.Element {
     }
 
     const onLabelsChange = (labels: string[]) => {
-        setChartData((current) => ({...current, labels: labels}));
+        setChartOptions((current) => ({...current, xaxis: {...current.xaxis, categories: labels}}));
     };
 
-    const options = {
-        responsive: true,
-        maintainAspectRatio: true,
-        animation: {
-            onComplete: function (e: { chart: { toBase64Image: () => string } }): void {
-                setDataUrl(e.chart.toBase64Image());
-            },
-        },
-        onResize: (_, size: {width: number}) => setWidth(size.width),
-    }
+    const onDatasetChange = (index: number, dataset: TAxisDataset): void => {
+        if (chartSeries === undefined) {
+            return;
+        }
 
-    const onDatasetChange = (index: number, dataset: TDataset): void => {
-        const datasets = chartData.datasets.map((ds, i) => index === i ? dataset : ds);
+        const datasets = chartSeries.map((ds, i) => index === i ? dataset : ds);
 
-        setChartData((current: ChartData) => {
-            return {...current, datasets: datasets};
-        })
+        setChartSeries(datasets);
     }
 
     const onDatasetRemove = (index: number): void => {
-        setChartData((current: ChartData) => ({...current, datasets: current.datasets.filter((_, i) => index !== i)})
-        )
+        setChartSeries(chartSeries.filter((_, i) => index !== i))
     }
 
     const onDatasetAdd = () => {
-        setChartData((current) => ({...current, datasets: [...current.datasets, defaultDataset]})
-        )
+        setChartSeries([...chartSeries, defaultDataset]);
     }
 
     const sizeProps = desktop ? {centered: true, size: '80%'} : {fullScreen: true};
 
     return <Modal opened={modalOpened} onClose={closeModal} {...sizeProps}>
         <Grid>
-            <Grid.Col span={{base: 12, md: 4}} >
+            <Grid.Col span={{base: 12, md: 4}}>
                 <Stack justify={'flex-start'} gap={'40px'}>
                     <Stack justify={'flex-start'} gap={'15px'}>
-                        <Text size={'md'}>Chart size</Text>
-                        <Slider min={1} max={100}  value={size} onChange={setSize} marks={[
-                            { value: 20, label: '20%' },
-                            { value: 50, label: '50%' },
-                            { value: 80, label: '80%' },
-                        ]} />
-                    </Stack>
-                    <Stack justify={'flex-start'} gap={'15px'}>
                         <Text size={'md'}>X-axis labels</Text>
-                        <MultiSelectCreatable values={chartData.labels} onValuesChange={onLabelsChange} />
+                        <MultiSelectCreatable values={chartOptions?.xaxis?.categories || []}
+                                              onValuesChange={onLabelsChange}/>
                     </Stack>
                     <Accordion multiple defaultValue={['Dataset #1']}>
                         <Text size={'md'}>Datasets</Text>
-                        {chartData.datasets.map((ds, index) =>
+                        {chartSeries.map((ds, index) =>
                             <Accordion.Item key={index} value={`Dataset #${index + 1}`}>
                                 <Accordion.Control>{`Dataset #${index + 1}`}</Accordion.Control>
                                 <Accordion.Panel>
                                     <>
-                                        <Dataset labelsLength={chartData.labels.length} index={index} dataset={ds} onChange={onDatasetChange} />
-                                        {chartData.datasets.length > 1 && <Button
+                                        <Dataset labelsLength={chartOptions?.xaxis?.categories?.length || 0}
+                                                 index={index} dataset={ds} onChange={onDatasetChange}/>
+                                        {chartSeries.length > 1 && <Button
                                             color={'red'}
                                             size={'xs'}
                                             className={'mt-1.5'}
                                             onClick={() => onDatasetRemove(index)}
                                         >
-                                            Remove
+                                            Remove Dataset
                                         </Button>}
                                     </>
                                 </Accordion.Panel>
                             </Accordion.Item>
                         )}
-                        <Button color={'green'} className={'mt-2.5'} onClick={onDatasetAdd}>Add</Button>
+                        <Button color={'green'} className={'mt-2.5'} onClick={onDatasetAdd}>Add Dataset</Button>
                     </Accordion>
-                    <Button className={'w-20'} onClick={onSave}>Save</Button>
+                    <Button onClick={onSave}>Save Chart</Button>
                 </Stack>
             </Grid.Col>
             <Grid.Col span={{base: 12, md: 8}}>
                 <Center className={desktop ? 'sticky top-[60px]' : ''}>
-                    <div style={{width: `${size}%`, position: 'relative'} }>
-                        <Bar ref={chartRef} data={chartData} options={options} />
+                    <div style={{width: `100%`, position: 'relative'}}>
+                        <Suspense fallback={null}>
+                            <ApexChart
+                                series={chartSeries}
+                                options={chartOptions}
+                                type="bar"
+                                width="100%"
+                            />
+                        </Suspense>
                     </div>
                 </Center>
             </Grid.Col>

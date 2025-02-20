@@ -1,25 +1,26 @@
 import {ChangeEvent, JSX, useState} from 'react';
-import {ColorInput, NumberInput, Stack, Textarea, TextInput} from "@mantine/core";
-
-export type TDataset = {
-    label: string,
-    borderWidth: number,
-    data: number[],
-    backgroundColor: string,
-    borderColor: string
-};
+import {Stack, Textarea, TextInput} from "@mantine/core";
+import {TAxisDataset} from "./ChartPlugin.tsx";
+import {useDebouncedCallback} from "@mantine/hooks";
 
 export function Dataset({dataset, onChange, index, labelsLength}: {
-    dataset: TDataset,
-    onChange: (index: number, ds: TDataset) => void,
+    dataset: TAxisDataset,
+    onChange: (index: number, ds: TAxisDataset) => void,
     index: number,
     labelsLength: number
 }): JSX.Element {
     const [textareaData, setTextareaData] = useState<string>(dataset.data.join('\n'));
     const [textareaError, setTextareaError] = useState<boolean>(false);
+    const [name, setName] = useState<string>(dataset.name);
+
+    const debouncedOnDataChange = useDebouncedCallback((index, ds) => onChange(index, ds), 200);
 
     const onValueChange = (key: string, value: string | number) => {
-        onChange(index, {...dataset, [key]: value});
+        if (key === 'name') {
+            setName(String(value));
+        }
+
+        debouncedOnDataChange(index, {...dataset, [key]: value});
     }
 
     const onDataChange = (e: ChangeEvent<HTMLTextAreaElement>): void => {
@@ -34,37 +35,16 @@ export function Dataset({dataset, onChange, index, labelsLength}: {
 
         setTextareaError(data.length !== value.split('\n').length);
 
-        onChange(index, {...dataset, data: data});
+        debouncedOnDataChange(index, {...dataset, data: data});
     }
 
     return <Stack justify={'flex-start'} gap={'15px'}>
         <TextInput
-            label="Label"
-            placeholder="Choose a dataset label"
-            description="Choose a dataset label"
-            value={dataset.label}
-            onChange={(e: ChangeEvent<HTMLInputElement>) => onValueChange('label', e.target.value)}
-        />
-        <ColorInput
-            label="Background color"
-            placeholder="Choose a background color"
-            value={dataset.backgroundColor}
-            onChange={(value) => onValueChange('backgroundColor', value)}
-        />
-        <ColorInput
-            label="Border color"
-            placeholder="Choose a background color"
-            value={dataset.borderColor}
-            onChange={(value) => onValueChange('borderColor', value)}
-        />
-        <NumberInput
-            label="Border width"
-            placeholder="Choose a value between 1 and 10"
-            description="Choose a value between 1 and 10"
-            min={1}
-            max={10}
-            value={dataset.borderWidth}
-            onChange={(value) => onValueChange('borderWidth', value)}
+            label="Name"
+            placeholder="Choose a dataset name"
+            description="Choose a dataset name"
+            value={name}
+            onChange={(e: ChangeEvent<HTMLInputElement>) => onValueChange('name', e.target.value)}
         />
         <Textarea
             label={'Data'}

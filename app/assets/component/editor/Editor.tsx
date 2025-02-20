@@ -146,13 +146,13 @@ export function Editor() {
         <>
             <LexicalComposer initialConfig={editorConfig}>
                 <div
-                    className="mx-auto my-5 rounded-sm rounded-t-xl max-w-[210mm] relative font-[400] leading-5 text-left text-black">
+                    className="mx-auto my-5 rounded-sm rounded-t-xl max-w-[420mm] relative font-[400] leading-5 text-left text-black">
                     <ToolbarPlugin/>
                     <div className="bg-white relative rounded-b-xl">
                         <RichTextPlugin
                             contentEditable={
                                 <ContentEditable
-                                    className="min-h-[150px] relative text-[15px] leading-5 resize-none caret-gray-600 outline-0 px-2.5 py-4 mb-2.5"
+                                    className="min-h-[500px] relative text-[15px] leading-5 resize-none caret-gray-600 outline-0 px-2.5 py-4 mb-2.5"
                                     aria-placeholder={placeholder}
                                     placeholder={
                                         <div
