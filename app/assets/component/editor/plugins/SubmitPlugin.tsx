@@ -3,6 +3,7 @@ import {$generateHtmlFromNodes} from "@lexical/html";
 import {JSX, useCallback, useContext, useEffect, useState} from 'react'
 import {Button} from "@mantine/core";
 import {MainContext} from "../../../context/MainContext.ts";
+import DOMPurify from "isomorphic-dompurify";
 
 type Props = {
     setPdfData: (data: string) => void,
@@ -16,7 +17,10 @@ export default function SubmitPlugin({setPdfData, openModal}: Props): JSX.Elemen
     const {pdfGenerateUrl} = useContext(MainContext);
 
     const $updateHtml = useCallback(() => {
-        setHtml($generateHtmlFromNodes(editor, null));
+        setHtml(DOMPurify.sanitize(
+            $generateHtmlFromNodes(editor, null),
+            { USE_PROFILES: {html: true, svg: true, svgFilters: true} }
+        ));
     }, [editor]);
 
     useEffect(() => {

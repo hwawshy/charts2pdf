@@ -48,7 +48,7 @@ readonly class PdfGenerator
             'envVariables' => [
                 'XDG_CONFIG_HOME' => '/tmp/.chromium',
                 'XDG_CACHE_HOME' => '/tmp/.chromium',
-            ]
+            ],
         ]);
 
         try {
@@ -66,6 +66,7 @@ readonly class PdfGenerator
                 'marginBottom'      => 0.0,
                 'marginLeft'        => 0.0,
                 'marginRight'       => 0.0,
+                'scale' => 0.5
             ]);
 
             return $pdf->getBase64();

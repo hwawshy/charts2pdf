@@ -3,10 +3,10 @@
 namespace TreknParcel\Controller;
 
 use Psr\Log\LoggerInterface;
-use Symfony\Component\HtmlSanitizer\HtmlSanitizerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 use TreknParcel\DTO\PDFRequest;
+use TreknParcel\Service\DOMPurifier;
 use TreknParcel\Service\PdfGenerator;
 use TreknParcel\Service\SsrService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -18,7 +18,7 @@ class IndexController extends AbstractController
     public function __construct(
         private readonly SsrService             $ssrService,
         private readonly PdfGenerator           $pdfGenerator,
-        private readonly HtmlSanitizerInterface $mainSanitizer,
+        private readonly DOMPurifier $DOMPurifier,
         private readonly LoggerInterface        $logger
     ) {
     }
@@ -39,9 +39,9 @@ class IndexController extends AbstractController
     public function generate(#[MapRequestPayload] PDFRequest $pdfRequest): JsonResponse
     {
         try {
-            //$safeHtml = $this->mainSanitizer->sanitize($pdfRequest->html);
+            $safeHTML = $this->DOMPurifier->sanitize($pdfRequest->html);
 
-            $result = $this->pdfGenerator->generate($pdfRequest->html);
+            $result = $this->pdfGenerator->generate($safeHTML);
 
             return new JsonResponse(['content' => $result]);
         } catch (\Throwable $e) {
