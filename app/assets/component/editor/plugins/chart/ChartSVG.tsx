@@ -1,17 +1,13 @@
 import {JSX, useEffect, useState} from 'react';
-import {ApexOptions} from "apexcharts";
-import {TAxisDataset} from "./ChartPlugin.tsx";
 import {useLexicalNodeSelection} from "@lexical/react/useLexicalNodeSelection";
 import {NodeKey} from "lexical";
 
 type Props = {
     chartId: string,
-    chartOptions: ApexOptions,
-    chartSeries: TAxisDataset,
     nodeKey: NodeKey
 };
 
-export default function ChartSVG({chartId, chartOptions, chartSeries, nodeKey}: Props): JSX.Element {
+export default function ChartSVG({chartId, nodeKey}: Props): JSX.Element {
     const [SVGElement, setSVGElement] = useState<SVGElement | null>(null);
     const [, setSelected, ] = useLexicalNodeSelection(nodeKey);
 
@@ -55,7 +51,7 @@ export default function ChartSVG({chartId, chartOptions, chartSeries, nodeKey}: 
         };
 
         setElement();
-    }, [chartId, chartOptions, chartSeries, setSelected]);
+    }, [chartId, setSelected]);
 
     return <p className={'inline-block w-[700px]'} dangerouslySetInnerHTML={{__html: SVGElement?.outerHTML ?? ''}}></p>;
 }

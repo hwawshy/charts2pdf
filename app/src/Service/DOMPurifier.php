@@ -7,6 +7,8 @@ use Symfony\Component\Process\Process;
 
 readonly class DOMPurifier
 {
+    private const float TIMEOUT = 2.0;
+
     public function sanitize(string $html): string
     {
         $process = new Process([
@@ -16,7 +18,7 @@ readonly class DOMPurifier
         ]);
 
         $process->setInput($html);
-        $process->setTimeout(2.0);
+        $process->setTimeout(self::TIMEOUT);
 
         $process->run();
 

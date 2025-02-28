@@ -55,10 +55,10 @@ export class ChartNode extends DecoratorNode<JSX.Element> {
     }
 
     decorate(): JSX.Element {
-        const {chartId, chartOptions, chartSeries} = JSON.parse(this.__data);
+        const {chartOptions: chartOptions} = JSON.parse(this.__data);
 
         return <Suspense fallback={null}>
-                <ChartSVG chartId={chartId} chartOptions={chartOptions} chartSeries={chartSeries} nodeKey={this.getKey()} />
+                <ChartSVG chartId={chartOptions.chart.id} nodeKey={this.getKey()} />
         </Suspense>;
     }
 }
