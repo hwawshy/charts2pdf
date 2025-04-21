@@ -50,6 +50,7 @@ import { createServer as createViteServer } from 'vite'
             if (!isProd) {
                 vite.ssrFixStacktrace(e)
             }
+            console.log('Error caught:', e)
             next(e)
         }
     })

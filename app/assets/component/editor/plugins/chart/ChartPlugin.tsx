@@ -62,6 +62,9 @@ export default function ChartPlugin(): JSX.Element {
         },
         theme: {
             palette: 'palette1'
+        },
+        legend: {
+            show: true,
         }
     };
 
@@ -94,7 +97,7 @@ export default function ChartPlugin(): JSX.Element {
                 JSON.stringify({
                     chartOptions,
                     chartSeries
-                }), 100)
+                }), 400, 400)
             $insertNodes([node]);
 
             if ($isRootOrShadowRoot(node.getParentOrThrow())) {

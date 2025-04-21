@@ -4,10 +4,11 @@ import {NodeKey} from "lexical";
 
 type Props = {
     chartId: string,
-    nodeKey: NodeKey
+    nodeKey: NodeKey,
+    chartContainerRef: {current: null | HTMLDivElement}
 };
 
-export default function ChartSVG({chartId, nodeKey}: Props): JSX.Element {
+export default function ChartSVG({chartId, nodeKey, chartContainerRef}: Props): JSX.Element {
     const [SVGElement, setSVGElement] = useState<SVGElement | null>(null);
     const [, setSelected, ] = useLexicalNodeSelection(nodeKey);
 
@@ -44,7 +45,7 @@ export default function ChartSVG({chartId, nodeKey}: Props): JSX.Element {
                 svgElement.setAttributeNS(null, 'viewBox', '0 0 ' + svgWidth + ' ' + svgHeight)
 
                 setSVGElement(svgElement as SVGElement);
-                setSelected(false); // trigger an editor state update after this component finished rendering asynchronously
+                setSelected(false); // trigger an editor state update after this component has finished rendering asynchronously
             } catch (e) {
                 console.error('SVG creation failed', e);
             }
@@ -53,5 +54,5 @@ export default function ChartSVG({chartId, nodeKey}: Props): JSX.Element {
         setElement();
     }, [chartId, setSelected]);
 
-    return <p className={'inline-block w-[700px]'} dangerouslySetInnerHTML={{__html: SVGElement?.outerHTML ?? ''}}></p>;
+    return <div ref={chartContainerRef} className={'inline-block w-[400px]'} dangerouslySetInnerHTML={{__html: SVGElement?.outerHTML ?? ''}}></div>;
 }

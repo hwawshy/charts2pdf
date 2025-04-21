@@ -8,7 +8,7 @@ export default defineConfig({
         host: '0.0.0.0',
         allowedHosts: ["local.charts2pdf.com"],
         cors: {
-            origin: ['http://local.charts2pdf.com']
+            origin: true // TODO fix chromium not setting origin header
         }
     },
     plugins: [

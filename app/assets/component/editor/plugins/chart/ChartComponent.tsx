@@ -1,10 +1,11 @@
-import { CLICK_COMMAND, COMMAND_PRIORITY_LOW, isDOMNode, NodeKey } from "lexical";
+import { $getNodeByKey, CLICK_COMMAND, COMMAND_PRIORITY_LOW, isDOMNode, NodeKey } from "lexical";
 import ChartSVG from "./ChartSVG";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useLexicalNodeSelection } from "@lexical/react/useLexicalNodeSelection";
 import { useLexicalEditable } from "@lexical/react/useLexicalEditable";
 import ChartResizer from "./ChartResizer";
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
+import { $isChartNode } from "./ChartNode";
 
 type Props = {
     chartId: string,
@@ -17,6 +18,27 @@ export default function ChartComponent({chartId, nodeKey}: Props): JSX.Element {
     const [editor] = useLexicalComposerContext();
     const [isSelected, setSelected, clearSelection] = useLexicalNodeSelection(nodeKey);
     const isEditable = useLexicalEditable();
+    const [isResizing, setIsResizing] = useState<boolean>(false);
+
+    const onResizeStart = () => {
+      setIsResizing(true);
+    };
+
+    const onResizeEnd = (nextWidth: number, nextHeight: number) => {
+      // Delay hiding the resize bars for click case
+      setTimeout(() => {
+        setIsResizing(false);
+      }, 200);
+
+      editor.update(() => {
+        const node = $getNodeByKey(nodeKey);
+  
+        if ($isChartNode(node)) {
+          node.setWidth(nextWidth);
+          node.setHeight(nextHeight);
+        }
+      });
+    };
 
     useEffect(() => {
         if (!isEditable) {
@@ -28,9 +50,12 @@ export default function ChartComponent({chartId, nodeKey}: Props): JSX.Element {
         return editor.registerCommand(
             CLICK_COMMAND,
             (event: MouseEvent) => {
-                console.log(isSelected)
                 const buttonElem = buttonRef.current;
                 const eventTarget = event.target;
+
+                if (isResizing) {
+                  return true;
+                }
 
                 if (
                     buttonElem !== null &&
@@ -46,14 +71,12 @@ export default function ChartComponent({chartId, nodeKey}: Props): JSX.Element {
             },
             COMMAND_PRIORITY_LOW,
           );
-      }, [clearSelection, editor, isSelected, setSelected, isEditable]);
+      }, [clearSelection, editor, isSelected, setSelected, isEditable, isResizing]);
 
-      return <ChartSVG chartContainerRef={chartContainerRef} chartId={chartId} nodeKey={nodeKey} />;
-
-    /* return <>
+    return <>
       <button ref={buttonRef} className={`border-0 p-0 m-0 bg-transparent outline-blue-500 outline-2 ${isSelected ? 'outline' : ''}`}>
           <ChartSVG chartContainerRef={chartContainerRef} chartId={chartId} nodeKey={nodeKey} />
-          {isEditable && isSelected && <ChartResizer chartContainerRef={chartContainerRef} />}
+          {isEditable && isSelected && <ChartResizer editor={editor} onResizeStart={onResizeStart} onResizeEnd={onResizeEnd} chartContainerRef={chartContainerRef} />}
       </button>
-    </>; */
+    </>;
 }
