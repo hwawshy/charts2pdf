@@ -25,7 +25,7 @@ import {useState} from "react";
 import {SuccessModal} from "../ResultModal.tsx";
 import ChartPlugin from "./plugins/chart/ChartPlugin.tsx";
 import {ChartNode} from "./plugins/chart/ChartNode.tsx";
-import TreeViewPlugin from "./plugins/TreeViewPlugin.tsx";
+//import TreeViewPlugin from "./plugins/TreeViewPlugin.tsx";
 
 const placeholder = 'Enter some rich text...';
 
@@ -165,7 +165,6 @@ export function Editor() {
                         <ChartPlugin />
                         <HistoryPlugin/>
                         <AutoFocusPlugin/>
-                        <TreeViewPlugin />
                         <SubmitPlugin openModal={open} setPdfData={setPdfData} />
                     </div>
                 </div>
