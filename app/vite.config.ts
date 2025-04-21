@@ -5,7 +5,11 @@ import svgr from "vite-plugin-svgr";
 
 export default defineConfig({
     server: {
-        host: '0.0.0.0'
+        host: '0.0.0.0',
+        allowedHosts: ["local.charts2pdf.com"],
+        cors: {
+            origin: ['http://local.charts2pdf.com']
+        }
     },
     plugins: [
         react(),
